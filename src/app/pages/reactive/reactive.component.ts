@@ -12,6 +12,7 @@ export class ReactiveComponent implements OnInit {
   constructor( private fb: FormBuilder, private validadores:ValidadoresService) {
     this.crearFormulario();
     this.cargarDataAlFormulario();
+    this.crearListeners();
    }
 
   ngOnInit(): void {
@@ -31,6 +32,9 @@ export class ReactiveComponent implements OnInit {
   }
   get correoNoValido(){
     return this.form.get('correo').invalid && this.form.get('correo').touched;
+  }
+  get usuarioNoValido(){
+    return this.form.get('usuario').invalid && this.form.get('usuario').touched;
   }
   get password1NoValido(){
     return this.form.get('password1').invalid && this.form.get('password1').touched;
@@ -52,6 +56,7 @@ export class ReactiveComponent implements OnInit {
       nombre: ['', [Validators.required,Validators.minLength(5)]],
       apellido:['',[Validators.required,this.validadores.noMiguel]],
       correo:['',[Validators.required,Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      usuario:['', ,this.validadores.existeUsuario],
       password1:['',Validators.required],
       password2:['',Validators.required],
       direccion:this.fb.group({
@@ -62,6 +67,14 @@ export class ReactiveComponent implements OnInit {
     },{
       validators:this.validadores.passwordIguales('password1','password2')
     });
+  }
+  crearListeners(){
+    this.form.valueChanges.subscribe(valor =>{
+      console.log(valor);
+    })
+    this.form.statusChanges.subscribe(valor =>{
+      console.log(valor);
+    })
   }
   guardar(){
     if(this.form.invalid){
@@ -89,6 +102,8 @@ export class ReactiveComponent implements OnInit {
       nombre:'Miguel',
       apellido:'Tenorio',
       correo:'mart@gmail.com',
+      password1:'1234',
+      password2:'1234',
       direccion:{
         distrito:'19-b',
         ciudad:'Hammer'
